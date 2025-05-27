@@ -8,8 +8,8 @@ const rest = new REST().setToken(process.env.DISCORD_BOT_TOKEN)
 // Deletion of all the app commands
 ;(async () => {
   try {
-    await rest.put(Routes.applicationGuildCommands(process.env.DISCORD_APP_ID, process.env.DISCORD_GUILD_ID), {
-      body: []
+    await rest.put(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, process.env.DISCORD_GUILD_ID), {
+      body: [],
     })
     console.log(`🟢 Successfully deleted all the app commands!`)
   } catch (error) {

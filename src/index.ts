@@ -17,6 +17,7 @@ import { checkVersionsTopRocess } from "@/utils/checkVersionsToProcess"
 
 // Route imports
 import versionsRouter from "@/routes/versions"
+import authRouter from "@/routes/auth"
 
 import { startDClient } from "./discord"
 
@@ -50,6 +51,9 @@ app.get("/", (c) => {
 
 // Ruotes
 app.route("/versions", versionsRouter)
+
+// Auth
+app.route("/auth", authRouter)
 
 // Check for new versions and import them if they are not added yet.
 // Default 1 * 60 * 1000

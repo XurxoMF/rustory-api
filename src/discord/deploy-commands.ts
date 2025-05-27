@@ -46,12 +46,12 @@ const rest = new REST().setToken(process.env.DISCORD_BOT_TOKEN)
   try {
     if (COMMAND_ID.length > 0) {
       rest
-        .delete(Routes.applicationGuildCommand(process.env.DISCORD_APP_ID, process.env.DISCORD_GUILD_ID, COMMAND_ID))
+        .delete(Routes.applicationGuildCommand(process.env.DISCORD_CLIENT_ID, process.env.DISCORD_GUILD_ID, COMMAND_ID))
         .then(() => console.log("🟢 Command successfully deleted!"))
         .catch(console.error)
     } else {
-      await rest.put(Routes.applicationGuildCommands(process.env.DISCORD_APP_ID, process.env.DISCORD_GUILD_ID), {
-        body: commands
+      await rest.put(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, process.env.DISCORD_GUILD_ID), {
+        body: commands,
       })
       console.log(`🟢 Successfully refreshed/added all the app commands!`)
     }
