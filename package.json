@@ -1,0 +1,31 @@
+{
+  "name": "rustory-api",
+  "version": "0.1.0",
+  "author": "XurxoMF",
+  "description": "API to manage and serve Rustory data and files.",
+  "type": "module",
+  "scripts": {
+    "dev": "npm install && bun run --hot src/index.ts",
+    "start": "npm install && bun run src/index.ts",
+    "d-deploy-commands": "npm install && bun run src/discord/deploy-commands.ts",
+    "d-undeploy-commands": "npm install && bun run src/discord/undeploy-commands.ts"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "axios": "^1.8.2",
+    "bun": "^1.2.4",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7",
+    "fs-extra": "^11.3.0",
+    "hono": "^4.7.4",
+    "reflect-metadata": "^0.2.2",
+    "sqlite3": "^5.1.7",
+    "tar": "^7.4.3",
+    "typeorm": "^0.3.21"
+  },
+  "devDependencies": {
+    "@types/archiver": "^6.0.3",
+    "@types/bun": "latest",
+    "@types/fs-extra": "^11.0.4"
+  }
+}

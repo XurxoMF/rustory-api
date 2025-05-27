@@ -1,0 +1,6 @@
+# deps
+node_modules/
+db/
+.env
+public/versions/
+tmp/

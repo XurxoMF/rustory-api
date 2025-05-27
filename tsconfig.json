@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es2017",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strict": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@db": [
+        "src/database/index.ts"
+      ],
+      "@repos": [
+        "src/database/models/index.ts"
+      ]
+    },
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/types/*.d.ts",
+  ]
+}
