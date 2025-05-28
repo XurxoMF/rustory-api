@@ -9,7 +9,7 @@ export const getVersions = async (c: Context) => {
     const gameVersions = await gameVersionsRepo.find({ order: { releaseDate: "DESC" } })
 
     if (!gameVersions) {
-      return c.json({ message: "No versions found" }, 404)
+      return c.json({ error: "No versions found" }, 404)
     } else {
       return c.json(
         gameVersions.map((version) => {
@@ -23,14 +23,14 @@ export const getVersions = async (c: Context) => {
             linux: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/linux/${version?.version}.zip`,
             linuxSha: version?.linuxSha,
             macos: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${version?.version}.zip`,
-            macosSha: version?.macSha
+            macosSha: version?.macSha,
           }
         }, 200)
       )
     }
   } catch (error) {
     console.log("🔴 Error al buscar versions:", error)
-    return c.json({ message: "Error fetching versions" }, 500)
+    return c.json({ error: "Error fetching versions" }, 500)
   }
 }
 
@@ -42,7 +42,7 @@ export const getVersionByVersion = async (c: Context) => {
     const gameVersion = await gameVersionsRepo.findOneBy({ version })
 
     if (!gameVersion) {
-      return c.json({ message: "Version not found" }, 404)
+      return c.json({ error: "Version not found" }, 404)
     } else {
       return c.json(
         {
@@ -55,13 +55,13 @@ export const getVersionByVersion = async (c: Context) => {
           linux: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/linux/${gameVersion?.version}.zip`,
           linuxSha: gameVersion?.linuxSha,
           macos: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${gameVersion?.version}.zip`,
-          macosSha: gameVersion?.macSha
+          macosSha: gameVersion?.macSha,
         },
         200
       )
     }
   } catch (error) {
     console.log("🔴 Error buscando el version:", error)
-    return c.json({ message: "Error fetching version" }, 500)
+    return c.json({ error: "Error fetching version" }, 500)
   }
 }
