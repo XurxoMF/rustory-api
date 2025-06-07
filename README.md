@@ -41,5 +41,5 @@ docker build -t rustory-api-docker .
 ```
 
 ```sh
-docker run --name rustory-api -d -p 3005:3000 -v $(pwd)/db:/app/db -v $(pwd)/public:/app/public rustory-api-docker
+docker run --name rustory-api -d -p 3005:3000 -v $(pwd)/db:/app/db -v $(pwd)/public:/app/public -v $(pwd)/src:/app/src rustory-api-docker
 ```
