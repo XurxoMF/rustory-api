@@ -36,7 +36,7 @@ app.use(
   "/files/*",
   serveStatic({
     root: resolve(__dirname, `/app/public`),
-    rewriteRequestPath: (path) => path.replace(/^\/files/, ""),
+    rewriteRequestPath: (path) => path,
   })
 );
 

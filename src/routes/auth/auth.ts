@@ -1,6 +1,8 @@
+import { db, roles, userRoles, users } from "@/db";
 import axios from "axios";
+import { eq } from "drizzle-orm";
 import { type Context } from "hono";
-import { type JwtPayload, sign, verify } from "jsonwebtoken";
+import { decode, type JwtPayload, sign, verify } from "jsonwebtoken";
 
 export const authDiscord = (c: Context) => {
   const redirect_uri = c.req.query("redirect_uri");
@@ -45,7 +47,7 @@ export const authDiscordCallback = async (c: Context) => {
 
   const user = userRes.data;
 
-  const jwtPayload = {
+  const jwtPayload: DiscordUserType = {
     id: user.id,
     username: user.username,
     avatar: user.avatar
@@ -53,13 +55,34 @@ export const authDiscordCallback = async (c: Context) => {
       : `https://cdn.discordapp.com/embed/avatars/0.png`,
   };
 
+  try {
+    const dbMatchingUsers = await db.$count(users, eq(users.discordId, user.id));
+
+    if (dbMatchingUsers === 0) {
+      const [createdUser] = await db
+        .insert(users)
+        .values({
+          discordId: jwtPayload.id,
+        })
+        .returning();
+
+      await db.insert(userRoles).values({
+        userId: createdUser.id,
+        roleId: 1,
+      });
+    }
+  } catch (e) {
+    console.error("Error while inserting user into the database:", JSON.stringify(e));
+    return c.json({ error: "Internal server error" }, 500);
+  }
+
   const accessToken = sign(jwtPayload, process.env.JWT_SECRET, { expiresIn: "1h" });
-  const refreshToken = sign({ id: user.id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+  const refreshToken = sign(jwtPayload, process.env.REFRESH_SECRET, { expiresIn: "30d" });
 
   if (state.startsWith("https://") || state.startsWith("http://")) {
     return c.html(
       `<!doctypehtml><html lang="en"><meta charset="UTF-8"><meta content="width=device-width,initial-scale=1"name="viewport"><link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700&display=swap"rel="stylesheet"><title>You're now logged in!</title><div class="container"><h1>You're now logged in!</h1><p>This page should be closed automatically. If don't, feel free to close it manually!</div><style>*{box-sizing:border-box;padding:0;margin:0}body{width:100dvw;height:100dvh;background-color:#18181b;color:#f4f4f5;font-family:Ubuntu,"Courier New",Courier,monospace;display:flex;align-items:center;justify-content:center}.container{width:100%;max-width:60rem;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1rem}</style><script>if (window.opener) {window.opener.postMessage(${JSON.stringify(
-        { accessToken, refreshToken, jwtPayload }
+        { accessToken, refreshToken }
       )}, "${
         new URL(state).origin
       }");} else {window.location = '${state}?accessToken=${accessToken}&refreshToken=${refreshToken}';}</script>`
@@ -77,16 +100,69 @@ export const refreshJWT = async (c: Context) => {
   if (!refreshToken) return c.json({ error: "No refreshToken provided!" }, 400);
 
   try {
-    const payload = verify(refreshToken, process.env.REFRESH_SECRET) as JwtPayload;
+    const payload = verify(refreshToken, process.env.REFRESH_SECRET) as DiscordUserType;
 
-    const newAccessToken = sign({ id: payload.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const jwtPayload: DiscordUserType = {
+      id: payload.id,
+      username: payload.username,
+      avatar: payload.avatar,
+    };
+
+    const newAccessToken = sign(jwtPayload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     return c.json({ accessToken: newAccessToken });
   } catch (err) {
+    console.log("Error while verifying refreshToken:", JSON.stringify(err));
     return c.json({ error: "Invalid or expired refreshToken!" }, 401);
   }
 };
 
 export const logout = async (c: Context) => {
-  return c.json({ message: "Logged out!" });
+  return c.json({ message: "Logged out!" }, 200);
+};
+
+export const getUserData = async (c: Context) => {
+  const authHeader = c.req.header("Authorization");
+
+  if (!authHeader || !authHeader.startsWith("Bearer "))
+    return c.json({ error: "Unauthorized" }, 401);
+
+  const accessToken = authHeader.split(" ")[1];
+
+  try {
+    const payload = verify(accessToken, process.env.JWT_SECRET) as DiscordUserType;
+
+    if (!payload || !payload.id) return c.json({ error: "Unautorized!" }, 401);
+
+    const userWithRoles = await db
+      .select({
+        id: users.id,
+        discordId: users.discordId,
+        role: roles.role,
+      })
+      .from(users)
+      .innerJoin(userRoles, eq(users.id, userRoles.userId))
+      .innerJoin(roles, eq(userRoles.roleId, roles.id))
+      .where(eq(users.discordId, payload.id));
+
+    if (userWithRoles.length < 1) return c.json({ error: "User not found!" }, 400);
+
+    const user = {
+      id: userWithRoles[0].discordId,
+      username: payload.username,
+      avatar: payload.avatar,
+      roles: userWithRoles.map((u) => u.role),
+    };
+
+    return c.json(user, 200);
+  } catch (e) {
+    console.error("Error while verifying JWT:", JSON.stringify(e));
+    return c.json({ error: "Internal server error" }, 500);
+  }
+};
+
+export type DiscordUserType = {
+  id: string;
+  username: string;
+  avatar: string;
 };
