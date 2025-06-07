@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.github
+*.log
+.env.template
+CODE_OF_CONDUCT.md
+Dockerfile
+Dockerfile.dev
+CONTRIBUTING.md
+README.md
+SECURITY.md
+src/templates
+db

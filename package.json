@@ -1,0 +1,36 @@
+{
+  "name": "rustory-api",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/archiver": "^6.0.3",
+    "@types/bun": "^1.2.15",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jsonwebtoken": "^9.0.9",
+    "drizzle-kit": "^0.31.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.8",
+    "archiver": "^7.0.1",
+    "axios": "^1.9.0",
+    "discord.js": "^14.19.3",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.44.2",
+    "fs-extra": "^11.3.0",
+    "hono": "^4.7.11",
+    "jsonwebtoken": "^9.0.2",
+    "tar": "^7.4.3"
+  },
+  "scripts": {
+    "dev": "bun i && bun migration:migrate && bun --hot src/index.ts",
+    "start": "bun i && bun migration:migrate && bun src/index.ts",
+    "migration:generate": "drizzle-kit generate",
+    "migration:migrate": "drizzle-kit migrate",
+    "d-deploy-commands": "bun i && bun src/discord/deploy-commands.ts",
+    "d-undeploy-commands": "bun i && bun src/discord/undeploy-commands.ts"
+  }
+}
