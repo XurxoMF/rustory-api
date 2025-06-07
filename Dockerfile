@@ -14,5 +14,6 @@ RUN bun install
 EXPOSE 3000
 
 VOLUME ["/app/db"]
+VOLUME ["/app/public"]
 
 CMD ["bun", "start"]

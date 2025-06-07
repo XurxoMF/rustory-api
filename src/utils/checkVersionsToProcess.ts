@@ -8,7 +8,7 @@ import { processVersion, type VersionURLSType } from "@/utils/precessVersion";
 export let IMPORTING = false;
 
 export async function checkVersionsTopRocess() {
-  if (process.env.AUTOIMPORTER == false || IMPORTING) return;
+  if (process.env.AUTOIMPORTER == "false" || IMPORTING) return;
 
   IMPORTING = true;
 
