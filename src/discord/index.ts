@@ -42,7 +42,7 @@ const commandFolders = fse.readdirSync(folderPath);
 
 for (const folder of commandFolders) {
   const commandsPath = path.join(folderPath, folder);
-  const commandsFiles = fse.readdirSync(commandsPath).filter((file) => file.endsWith(".ts"));
+  const commandsFiles = fse.readdirSync(commandsPath).filter((file) => file.endsWith("command.ts"));
 
   for (const file of commandsFiles) {
     const filePath = path.join(commandsPath, file);
@@ -71,8 +71,6 @@ for (const folder of commandFolders) {
             command.data.name,
             <DCommandUserContextMenuType>command
           );
-          break;
-        default:
           break;
       }
     } catch (error) {

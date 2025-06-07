@@ -1,15 +1,14 @@
-// TODO: Fix the deploy. It loads the commands and fails because it can't load the db... I need a workaround.
-
 import {
+  ContextMenuCommandBuilder,
   REST,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   type RESTPostAPIContextMenuApplicationCommandsJSONBody,
   Routes,
+  SlashCommandBuilder,
 } from "discord.js";
 import fse from "fs-extra";
 import path from "path";
 import * as dotenv from "dotenv";
-import { type DCommandBaseType } from "@/discord/discord.types";
 
 dotenv.config({ path: ".env" });
 
@@ -26,21 +25,16 @@ const commandFolders = fse.readdirSync(folderPath);
 
 for (const folder of commandFolders) {
   const commandsPath = path.join(folderPath, folder);
-  const commandFiles = fse.readdirSync(commandsPath).filter((file) => file.endsWith(".ts"));
+  const commandFiles = fse.readdirSync(commandsPath).filter((file) => file.endsWith("data.ts"));
 
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
 
     try {
-      const dCommand = await import(filePath);
-      const command: DCommandBaseType = dCommand.default;
+      const exports = await import(filePath);
+      const data: SlashCommandBuilder | ContextMenuCommandBuilder = exports.data;
 
-      if (!command.data || !command.execute || !command.data.toJSON) {
-        console.log(`🟡 Command on ${filePath} doesn't contain data or execute!`);
-        continue;
-      }
-
-      const dataJson = command.data.toJSON();
+      const dataJson = data.toJSON();
       commands.push(dataJson);
       console.log(`🟢 Command on ${filePath} successfully loaded!`);
     } catch (error) {

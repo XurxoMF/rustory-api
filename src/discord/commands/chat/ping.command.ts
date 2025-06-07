@@ -1,13 +1,12 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 import { getDClient } from "@/discord";
 import { type DCommandChatInputType, DCommandTypes } from "@/discord/discord.types";
+import { data } from "./ping.data";
 
 const command: DCommandChatInputType = {
   type: DCommandTypes.ChatInput,
   cooldown: 10,
-  data: new SlashCommandBuilder()
-    .setName("ping")
-    .setDescription("Returns pong with some latency info."),
+  data,
   async execute(interaction: ChatInputCommandInteraction) {
     const DClient = await getDClient();
 

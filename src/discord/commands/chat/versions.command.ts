@@ -1,15 +1,15 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 import { type DCommandChatInputType, DCommandTypes } from "@/discord/discord.types";
+import { desc } from "drizzle-orm";
 
 import { db, versions as versions } from "@db";
-import { desc } from "drizzle-orm";
+
+import { data } from "./versions.data";
 
 const command: DCommandChatInputType = {
   type: DCommandTypes.ChatInput,
   cooldown: 10,
-  data: new SlashCommandBuilder()
-    .setName("vs-versions")
-    .setDescription("Lists the available downloadable versions."),
+  data,
   async execute(interaction: ChatInputCommandInteraction) {
     const gameVersions = await db.select().from(versions).orderBy(desc(versions.releaseDate));
 
