@@ -1,4 +1,4 @@
-import { Collection, GatewayIntentBits } from "discord.js";
+import { Collection, Events, GatewayIntentBits } from "discord.js";
 import path from "path";
 import fse from "fs-extra";
 
@@ -98,7 +98,7 @@ for (const file of eventFiles) {
 export function startDClient() {
   if (!DCLIENT_READY) {
     DCLIENT_READY = new Promise<DClientClass>((resolve, reject) => {
-      DClient.once("ready", () => {
+      DClient.once(Events.ClientReady, () => {
         console.log(`🟢 Discord bot running!`);
         resolve(DClient);
       });

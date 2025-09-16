@@ -80,7 +80,7 @@ export async function processVersion(
     embed.setDescription((embedDesc += `✅ · MacOS file extracted!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
 
-    // Extract Windows file
+    // Compress Windows file
     embed.setDescription(embedDesc + `${EMOJIS.LOADING} Compressing Windows VS Version!`);
     await webhook.editMessage(message.id, { embeds: [embed] });
     const winZip = await compressWindowsFile(version, winOut);
@@ -88,7 +88,7 @@ export async function processVersion(
     embed.setDescription((embedDesc += `✅ · Windows VS Version compressed!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
 
-    // Extract Linux file
+    // Compress Linux file
     embed.setDescription(embedDesc + `${EMOJIS.LOADING} Compressing Linux VS Version!`);
     await webhook.editMessage(message.id, { embeds: [embed] });
     const linuxZip = await compressLinuxFile(version, linuxOut);
@@ -96,7 +96,7 @@ export async function processVersion(
     embed.setDescription((embedDesc += `✅ · Linux VS Version compressed!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
 
-    // Extract MacOS file
+    // Compress MacOS file
     embed.setDescription(embedDesc + `${EMOJIS.LOADING} Compressing MacOS VS Version!`);
     await webhook.editMessage(message.id, { embeds: [embed] });
     const macZip = await compressMacFile(version, macOut);

@@ -11,7 +11,7 @@ export async function compressWindowsFile(
     const outFullPath = path.join(outputPath, outputFileName);
 
     const worker = new Worker(path.resolve(__dirname, "../workers/compressWorker.ts"), {
-      workerData: { inputPath: path.join(extractedFolder, "app"), outputPath, outputFileName },
+      workerData: { inputPath: path.join(extractedFolder, "{app}"), outputPath, outputFileName },
     });
 
     worker.on("message", (message) => {

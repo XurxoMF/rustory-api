@@ -1,4 +1,4 @@
-import { Events, ActivityType, CommandInteraction } from "discord.js";
+import { Events, ActivityType } from "discord.js";
 import { getDClient } from "@/discord";
 import { type DReadyEventType } from "@/discord/discord.types";
 
