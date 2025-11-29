@@ -82,7 +82,7 @@ export async function compressMacFile(
 
     const worker = new Worker(path.resolve(__dirname, "../workers/compressWorker.ts"), {
       workerData: {
-        inputPath: path.join(extractedFolder, "vintagestory.app"),
+        inputPath: path.join(extractedFolder, "Vintage Story.app"),
         outputPath,
         outputFileName,
       },
