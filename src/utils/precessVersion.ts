@@ -15,11 +15,11 @@ export type VersionURLSType = { win: string; linux: string; macos: string };
 export async function processVersion(
   version: string,
   urls: VersionURLSType,
-  releaseDate: number
+  releaseDate: number,
 ): Promise<boolean> {
   console.log(`💡 Downloading VS v${version}!`);
 
-  let content = `<@&1375544976489844766> New VS Version available!`;
+  let content = `New VS Version available! ${version}`;
   let embedDesc = ``;
 
   const embed = new EmbedBuilder()
@@ -158,9 +158,12 @@ export async function processVersion(
     });
 
     embed.setDescription(
-      (embedDesc += `✅ · VS Version saved!\n\nYou can now download it on Rustory!`)
+      (embedDesc += `✅ · VS Version saved!\n\nYou can now download it on Rustory!`),
     );
     await webhook.editMessage(message.id, { embeds: [embed] });
+    await webhook.send({ content: `<@&1339150731076435990> New VS Version ready!` });
+
+    console.log(`🟢 VS v${version} added successfully!`);
   } catch (err: any) {
     console.log(err);
 
@@ -172,8 +175,6 @@ export async function processVersion(
 
     return false;
   } finally {
-    console.log(`🟢 VS v${version} added successfully!`);
-
     const tmpDeleted = await deleteTmpFolder();
     if (!tmpDeleted) console.log("🔴 /app/tmp folder couldn't be deleted!");
 
