@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["bun-types", "node"],
     // Enable latest features
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",
@@ -26,5 +27,5 @@
       "@db": ["./src/db/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/types/*.d.ts"]
+  "include": ["src/**/*.ts", "src/types/*.d.ts", "drizzle.config.ts"]
 }
