@@ -4,7 +4,8 @@ RUN dpkg --add-architecture i386
 
 RUN apt-get update && apt-get install -y \
     wine \
-    wine32:i386
+    wine32:i386 \
+    curl
 
 ENV DISPLAY=:99
 ENV WINEPREFIX=/root/.wine
