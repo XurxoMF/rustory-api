@@ -161,7 +161,7 @@ export async function processVersion(
       (embedDesc += `✅ · VS Version saved!\n\nYou can now download it on Rustory!`),
     );
     await webhook.editMessage(message.id, { embeds: [embed] });
-    await webhook.send({ content: `<@&1339150731076435990> New VS Version ready!` });
+    await webhook.send({ content: `<@&1375544976489844766> New VS Version ready!` });
 
     console.log(`🟢 VS v${version} added successfully!`);
   } catch (err: any) {

@@ -27,7 +27,7 @@ app.use(
   serveStatic({
     root: resolve(__dirname, `/app/public`),
     rewriteRequestPath: (path) => path,
-  })
+  }),
 );
 
 // Serve public files
@@ -36,7 +36,7 @@ app.use(
   serveStatic({
     root: resolve(__dirname, `/app/public`),
     rewriteRequestPath: (path) => path,
-  })
+  }),
 );
 
 // Health check
@@ -54,9 +54,12 @@ setInterval(checkVersionsTopRocess, 1 * 60 * 1000);
 // Initialize server
 (async () => {
   try {
+    console.log(`\n\n\n🟢 Starting API on ${process.env.PROTOCOL}${process.env.DOMAIN}!`);
+
     await startDClient();
 
     serve({ fetch: app.fetch, port: 3000 });
+
     console.log(`🟢 Server running on ${process.env.PROTOCOL}${process.env.DOMAIN}!`);
   } catch (err) {
     console.error("🔴 Error starting API:", err);

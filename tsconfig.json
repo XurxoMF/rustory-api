@@ -1,10 +1,7 @@
 {
   "compilerOptions": {
     // Enable latest features
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
@@ -23,19 +20,11 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
-    // Alias
-    "baseUrl": ".",
+    // Aliases
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@db": [
-        "src/db/index.ts"
-      ]
-    },
+      "@/*": ["./src/*"],
+      "@db": ["./src/db/index.ts"]
+    }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/types/*.d.ts",
-  ]
+  "include": ["src/**/*.ts", "src/types/*.d.ts"]
 }
