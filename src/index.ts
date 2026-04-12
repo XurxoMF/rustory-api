@@ -25,7 +25,7 @@ app.use(cors());
 app.use(
   "/favicon.ico",
   serveStatic({
-    root: resolve(__dirname, `/app/public`),
+    root: resolve(`/app/public`),
     rewriteRequestPath: (path) => path,
   }),
 );
@@ -34,8 +34,10 @@ app.use(
 app.use(
   "/files/*",
   serveStatic({
-    root: resolve(__dirname, `/app/public`),
-    rewriteRequestPath: (path) => path,
+    root: resolve(`/app/public`),
+    rewriteRequestPath: (path) => {
+      return path.replace(/^\/files/, "");
+    },
   }),
 );
 

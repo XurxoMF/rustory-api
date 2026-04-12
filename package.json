@@ -27,7 +27,7 @@
   },
   "scripts": {
     "dev": "bun i && bun migration:migrate && bun --hot src/index.ts",
-    "start": "bun i && bun migration:migrate && bun src/index.ts",
+    "start": "bun migration:migrate && bun src/index.ts",
     "migration:generate": "drizzle-kit generate",
     "migration:migrate": "drizzle-kit migrate",
     "d-deploy-commands": "bun i && bun src/discord/deploy-commands.ts",
