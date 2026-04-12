@@ -30,11 +30,17 @@ app.use(
   }),
 );
 
+// TESTING
+app.use("/files/*", async (c, next) => {
+  c.header("Cache-Control", "no-transform");
+  await next();
+});
+
 // Serve public files
 app.use(
   "/files/*",
   serveStatic({
-    root: resolve(__dirname, `/app/public`),
+    root: resolve(`/app/public`),
     rewriteRequestPath: (path) => {
       return path.replace(/^\/files/, "");
     },
