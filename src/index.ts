@@ -30,6 +30,18 @@ app.use(
   }),
 );
 
+// Add Content-Length header
+app.use("/files/*", async (c, next) => {
+  const filePath = c.req.path.replace(/^\/files/, "");
+  const file = Bun.file(`/app/public${filePath}`);
+
+  if (await file.exists()) {
+    c.header("Content-Length", String(file.size));
+  }
+
+  await next();
+});
+
 // Serve public files
 app.use(
   "/files/*",
