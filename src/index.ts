@@ -30,12 +30,6 @@ app.use(
   }),
 );
 
-// TESTING
-app.use("/files/*", async (c, next) => {
-  c.header("Cache-Control", "no-transform");
-  await next();
-});
-
 // Serve public files
 app.use(
   "/files/*",
