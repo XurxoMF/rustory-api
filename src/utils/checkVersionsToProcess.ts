@@ -10,6 +10,8 @@ export let IMPORTING = false;
 export async function checkVersionsTopRocess() {
   if (process.env.AUTOIMPORTER == "false" || IMPORTING) return;
 
+  console.log("🔍 Checking for new versions...");
+
   IMPORTING = true;
 
   const data = await fetch("https://api.vintagestory.at/stable-unstable.json");
