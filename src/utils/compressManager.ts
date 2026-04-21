@@ -3,10 +3,10 @@ import path from "path";
 
 export async function compressWindowsFile(
   version: string,
-  extractedFolder: string
+  extractedFolder: string,
 ): Promise<string | null> {
   return await new Promise<string | null>((resolve) => {
-    const outputPath = "/app/public/files/versions/windows";
+    const outputPath = "/app/public/versions/windows";
     const outputFileName = `${version}.zip`;
     const outFullPath = path.join(outputPath, outputFileName);
 
@@ -36,10 +36,10 @@ export async function compressWindowsFile(
 
 export async function compressLinuxFile(
   version: string,
-  extractedFolder: string
+  extractedFolder: string,
 ): Promise<string | null> {
   return await new Promise<string | null>((resolve) => {
-    const outputPath = "/app/public/files/versions/linux";
+    const outputPath = "/app/public/versions/linux";
     const outputFileName = `${version}.zip`;
     const outFullPath = path.join(outputPath, outputFileName);
 
@@ -73,10 +73,10 @@ export async function compressLinuxFile(
 
 export async function compressMacFile(
   version: string,
-  extractedFolder: string
+  extractedFolder: string,
 ): Promise<string | null> {
   return await new Promise<string | null>((resolve) => {
-    const outputPath = "/app/public/files/versions/macos";
+    const outputPath = "/app/public/versions/macos";
     const outputFileName = `${version}.zip`;
     const outFullPath = path.join(outputPath, outputFileName);
 
