@@ -22,9 +22,9 @@ export type DCommandBaseType = {
 };
 
 export type DCommandChatInputType = DCommandBaseType & {
-  cooldown?: number;
+  cooldown?: number | undefined;
   data: OptionalExceptFor<SlashCommandBuilder, "name">;
-  autocomplete?: (interaction: AutocompleteInteraction) => void;
+  autocomplete?: ((interaction: AutocompleteInteraction) => void) | undefined;
   execute: (interaction: ChatInputCommandInteraction) => void;
 };
 
@@ -40,7 +40,7 @@ export type DCommandUserContextMenuType = DCommandBaseType & {
 
 export type DBaseEventType = {
   name: string;
-  once?: boolean;
+  once?: boolean | undefined;
   execute: any;
 };
 

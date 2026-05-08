@@ -52,7 +52,7 @@ const interationCreateEvent: DInteractionCreateEventType = {
         DClient,
         commandChatInput.data.name,
         interaction.user.id,
-        commandChatInput.cooldown
+        commandChatInput.cooldown,
       );
 
       if (isInCooldwn !== -1) {
@@ -82,7 +82,7 @@ const interationCreateEvent: DInteractionCreateEventType = {
       }
     } else if (interaction.isMessageContextMenuCommand()) {
       const commandMessageContextMenu = DClient.comandosMessageContextMenu.get(
-        interaction.commandName
+        interaction.commandName,
       );
 
       if (!commandMessageContextMenu) {
@@ -155,7 +155,7 @@ async function checkIsInCooldown(
   client: DClientClass,
   command: string,
   userId: string,
-  cooldown?: number
+  cooldown?: number | undefined,
 ): Promise<number> {
   const cooldowns = client.cooldowns;
 
