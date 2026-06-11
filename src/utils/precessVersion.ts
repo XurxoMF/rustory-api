@@ -4,13 +4,33 @@ import { db, versions } from "@db";
 
 import { EMBED_COLORS, EMOJIS } from "@/discord/config.data";
 
-import { downloadLinuxFile, downloadMacFile, downloadWindowsFile } from "@/utils/downloadManagers";
-import { extractLinuxFile, extractMacFile, extractWindowsFile } from "@/utils/extractManagers";
-import { compressLinuxFile, compressMacFile, compressWindowsFile } from "@/utils/compressManager";
+import {
+  downloadLinuxFile,
+  downloadMacARM64File,
+  downloadMacX64File,
+  downloadWindowsFile,
+} from "@/utils/downloadManagers";
+import {
+  extractLinuxFile,
+  extractMacARM64File,
+  extractMacX64File,
+  extractWindowsFile,
+} from "@/utils/extractManagers";
+import {
+  compressLinuxFile,
+  compressMacARM64File,
+  compressMacX64File,
+  compressWindowsFile,
+} from "@/utils/compressManager";
 import { deleteTmpFolder } from "@/utils/deleteManager";
 import { generateSHA256 } from "@/utils/shaGeneratorManager";
 
-export type VersionURLSType = { win: string; linux: string; macos: string };
+export type VersionURLSType = {
+  win: string;
+  linux: string;
+  macos_x64: string;
+  macos_arm64: string;
+};
 
 export async function processVersion(
   version: string,
@@ -48,13 +68,25 @@ export async function processVersion(
     embed.setDescription((embedDesc += `✅ · Linux file downloaded!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
 
-    // Download MacOS file
-    embed.setDescription(embedDesc + `${EMOJIS.LOADING} Downloading MacOS file!`);
+    // Download MacOS X64 file
+    embed.setDescription(embedDesc + `${EMOJIS.LOADING} Downloading MacOS X64 file!`);
     await webhook.editMessage(message.id, { embeds: [embed] });
-    const macFile = await downloadMacFile(version, urls.macos);
-    if (!macFile) throw new Error("❌ · MacOS file failed to download!");
-    embed.setDescription((embedDesc += `✅ · MacOS file downloaded!\n`));
+    const macX64File = await downloadMacX64File(version, urls.macos_x64);
+    if (!macX64File) throw new Error("❌ · MacOS X64 file failed to download!");
+    embed.setDescription((embedDesc += `✅ · MacOS X64 file downloaded!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
+
+    // Download MacOS ARM64 file
+    let macArm64File: string | null = null;
+
+    if (urls.macos_arm64) {
+      embed.setDescription(embedDesc + `${EMOJIS.LOADING} Downloading MacOS ARM64 file!`);
+      await webhook.editMessage(message.id, { embeds: [embed] });
+      macArm64File = await downloadMacARM64File(version, urls.macos_arm64);
+      if (!macArm64File) throw new Error("❌ · MacOS ARM64 file failed to download!");
+      embed.setDescription((embedDesc += `✅ · MacOS ARM64 file downloaded!\n`));
+      await webhook.editMessage(message.id, { embeds: [embed] });
+    }
 
     // Extract Windows file
     embed.setDescription(embedDesc + `${EMOJIS.LOADING} Extracting Windows file!`);
@@ -72,13 +104,25 @@ export async function processVersion(
     embed.setDescription((embedDesc += `✅ · Linux file extracted!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
 
-    // Extract MacOS file
-    embed.setDescription(embedDesc + `${EMOJIS.LOADING} Extracting MacOS file!`);
+    // Extract MacOS X64 file
+    embed.setDescription(embedDesc + `${EMOJIS.LOADING} Extracting MacOS X64 file!`);
     await webhook.editMessage(message.id, { embeds: [embed] });
-    const macOut = await extractMacFile(version, macFile);
-    if (!macOut) throw new Error("❌ · MacOS file failed to extract!");
-    embed.setDescription((embedDesc += `✅ · MacOS file extracted!\n`));
+    const macX64Out = await extractMacX64File(version, macX64File);
+    if (!macX64Out) throw new Error("❌ · MacOS X64 file failed to extract!");
+    embed.setDescription((embedDesc += `✅ · MacOS X64 file extracted!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
+
+    // Extract MacOS ARM64 file
+    let macArm64Out: string | null = null;
+
+    if (macArm64File !== null) {
+      embed.setDescription(embedDesc + `${EMOJIS.LOADING} Extracting MacOS ARM64 file!`);
+      await webhook.editMessage(message.id, { embeds: [embed] });
+      macArm64Out = await extractMacARM64File(version, macArm64File);
+      if (!macArm64Out) throw new Error("❌ · MacOS ARM64 file failed to extract!");
+      embed.setDescription((embedDesc += `✅ · MacOS ARM64 file extracted!\n`));
+      await webhook.editMessage(message.id, { embeds: [embed] });
+    }
 
     // Compress Windows file
     embed.setDescription(embedDesc + `${EMOJIS.LOADING} Compressing Windows VS Version!`);
@@ -96,13 +140,25 @@ export async function processVersion(
     embed.setDescription((embedDesc += `✅ · Linux VS Version compressed!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
 
-    // Compress MacOS file
-    embed.setDescription(embedDesc + `${EMOJIS.LOADING} Compressing MacOS VS Version!`);
+    // Compress MacOS X64 file
+    embed.setDescription(embedDesc + `${EMOJIS.LOADING} Compressing MacOS X64 VS Version!`);
     await webhook.editMessage(message.id, { embeds: [embed] });
-    const macZip = await compressMacFile(version, macOut);
-    if (!macZip) throw new Error("❌ · MacOS VS Version failed to compress!");
-    embed.setDescription((embedDesc += `✅ · MacOS VS Version compressed!\n`));
+    const macX64Zip = await compressMacX64File(version, macX64Out);
+    if (!macX64Zip) throw new Error("❌ · MacOS X64 VS Version failed to compress!");
+    embed.setDescription((embedDesc += `✅ · MacOS Z64 VS Version compressed!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
+
+    // Compress MacOS ARM64 file
+    let macArm64Zip: string | null = null;
+
+    if (macArm64Out !== null) {
+      embed.setDescription(embedDesc + `${EMOJIS.LOADING} Compressing MacOS ARM64 VS Version!`);
+      await webhook.editMessage(message.id, { embeds: [embed] });
+      macArm64Zip = await compressMacARM64File(version, macArm64Out);
+      if (!macArm64Zip) throw new Error("❌ · MacOS ARM64 VS Version failed to compress!");
+      embed.setDescription((embedDesc += `✅ · MacOS ARM64 VS Version compressed!\n`));
+      await webhook.editMessage(message.id, { embeds: [embed] });
+    }
 
     // Generate Windows SHA256
     embed.setDescription(embedDesc + `${EMOJIS.LOADING} Generating Windows SHA256!`);
@@ -120,13 +176,25 @@ export async function processVersion(
     embed.setDescription((embedDesc += `✅ · Linux SHA256 generated!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
 
-    // Generate MacOS SHA256
-    embed.setDescription(embedDesc + `${EMOJIS.LOADING} Generating MacOS SHA256!`);
+    // Generate MacOS X64 SHA256
+    embed.setDescription(embedDesc + `${EMOJIS.LOADING} Generating MacOS X64 SHA256!`);
     await webhook.editMessage(message.id, { embeds: [embed] });
-    const macSha = await generateSHA256(macZip);
-    if (!macSha) throw new Error("❌ · MacOS SHA256 could not be generated!");
-    embed.setDescription((embedDesc += `✅ · MacOS SHA256 generated!\n`));
+    const macX64Sha = await generateSHA256(macX64Zip);
+    if (!macX64Sha) throw new Error("❌ · MacOS X64 SHA256 could not be generated!");
+    embed.setDescription((embedDesc += `✅ · MacOS X64 SHA256 generated!\n`));
     await webhook.editMessage(message.id, { embeds: [embed] });
+
+    // Generate MacOS ARM64 SHA256
+    let macArm64Sha: string | null = null;
+
+    if (macArm64Zip !== null) {
+      embed.setDescription(embedDesc + `${EMOJIS.LOADING} Generating MacOS ARM64 SHA256!`);
+      await webhook.editMessage(message.id, { embeds: [embed] });
+      macArm64Sha = await generateSHA256(macArm64Zip);
+      if (!macArm64Sha) throw new Error("❌ · MacOS ARM64 SHA256 could not be generated!");
+      embed.setDescription((embedDesc += `✅ · MacOS ARM64 SHA256 generated!\n`));
+      await webhook.editMessage(message.id, { embeds: [embed] });
+    }
 
     // Add VS Versions to the DB
     embed.setDescription(embedDesc + `${EMOJIS.LOADING} Saving VS Versions on the database!`);
@@ -154,7 +222,8 @@ export async function processVersion(
       importedDate: Date.now(),
       winSha,
       linuxSha,
-      macSha,
+      macX64Sha,
+      macArm64Sha: macArm64Sha ?? macX64Sha,
     });
 
     embed.setDescription(

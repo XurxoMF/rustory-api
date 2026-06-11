@@ -71,13 +71,50 @@ export async function compressLinuxFile(
   });
 }
 
-export async function compressMacFile(
+export async function compressMacX64File(
   version: string,
   extractedFolder: string,
 ): Promise<string | null> {
   return await new Promise<string | null>((resolve) => {
     const outputPath = "/app/public/versions/macos";
-    const outputFileName = `${version}.zip`;
+    const outputFileName = `${version}-X64.zip`;
+    const outFullPath = path.join(outputPath, outputFileName);
+
+    const worker = new Worker(path.resolve(__dirname, "../workers/compressWorker.ts"), {
+      workerData: {
+        inputPath: path.join(extractedFolder, "Vintage Story.app"),
+        outputPath,
+        outputFileName,
+      },
+    });
+
+    worker.on("message", (message) => {
+      if (message.type === "finished") return resolve(outFullPath);
+      if (message.type === "error") return resolve(null);
+    });
+
+    worker.on("error", (err) => {
+      console.log(`🔴 Compress worker error!`);
+      console.log(err);
+      return resolve(null);
+    });
+
+    worker.on("exit", (code) => {
+      if (code !== 0) {
+        console.log(`🔴 Compress worker exited with code ${code}!`);
+      }
+      return resolve(null);
+    });
+  });
+}
+
+export async function compressMacARM64File(
+  version: string,
+  extractedFolder: string,
+): Promise<string | null> {
+  return await new Promise<string | null>((resolve) => {
+    const outputPath = "/app/public/versions/macos";
+    const outputFileName = `${version}-ARM64.zip`;
     const outFullPath = path.join(outputPath, outputFileName);
 
     const worker = new Worker(path.resolve(__dirname, "../workers/compressWorker.ts"), {

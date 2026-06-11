@@ -10,6 +10,7 @@ export const versions = sqliteTable("versions", {
   importedDate: integer().notNull(),
   winSha: text().notNull(),
   linuxSha: text().notNull(),
-  macSha: text().notNull(),
+  macX64Sha: text().notNull(),
+  macArm64Sha: text().notNull(),
   ...timestamps,
 });

@@ -1,4 +1,5 @@
 import { type Context } from "hono";
+import fse from "fs-extra";
 
 import { db, versions } from "@db";
 import { desc, eq } from "drizzle-orm";
@@ -12,6 +13,10 @@ export const getVersions = async (c: Context) => {
     } else {
       return c.json(
         gameVersions.map((version) => {
+          const macosArm64File = fse.existsSync(
+            `/app/public/files/versions/macos/${version.version}.zip`,
+          );
+
           return {
             version: version?.version,
             type: version?.type,
@@ -21,10 +26,16 @@ export const getVersions = async (c: Context) => {
             windowsSha: version?.winSha,
             linux: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/linux/${version?.version}.zip`,
             linuxSha: version?.linuxSha,
-            macos: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${version?.version}.zip`,
-            macosSha: version?.macSha,
+            macos: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${version?.version}-X64.zip`,
+            macosSha: version?.macX64Sha,
+            macosX64: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${version?.version}-X64.zip`,
+            macosX64Sha: version?.macX64Sha,
+            macosArm64: macosArm64File
+              ? `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${version?.version}-ARM64.zip`
+              : `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${version?.version}-X64.zip`,
+            macosArm64Sha: version?.macArm64Sha,
           };
-        }, 200)
+        }, 200),
       );
     }
   } catch (error) {
@@ -37,31 +48,45 @@ export const getVersionByVersion = async (c: Context) => {
   const version = c.req.param("version");
 
   try {
-    const [gameVersion] = await db
-      .select()
-      .from(versions)
-      .where(eq(versions.version, version))
-      .orderBy(desc(versions.releaseDate))
-      .limit(1);
-
-    if (!gameVersion) {
-      return c.json({ error: "Version not found" }, 404);
+    if (version === undefined) {
+      c.json({ error: "Version not found" }, 404);
     } else {
-      return c.json(
-        {
-          version: gameVersion?.version,
-          type: gameVersion?.type,
-          releaseDate: gameVersion?.releaseDate,
-          importedDate: gameVersion?.importedDate,
-          windows: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/windows/${gameVersion?.version}.zip`,
-          windowsSha: gameVersion?.winSha,
-          linux: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/linux/${gameVersion?.version}.zip`,
-          linuxSha: gameVersion?.linuxSha,
-          macos: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${gameVersion?.version}.zip`,
-          macosSha: gameVersion?.macSha,
-        },
-        200
-      );
+      const [gameVersion] = await db
+        .select()
+        .from(versions)
+        .where(eq(versions.version, version))
+        .orderBy(desc(versions.releaseDate))
+        .limit(1);
+
+      if (!gameVersion) {
+        return c.json({ error: "Version not found" }, 404);
+      } else {
+        const macosArm64File = fse.existsSync(
+          `/app/public/files/versions/macos/${gameVersion.version}.zip`,
+        );
+
+        return c.json(
+          {
+            version: gameVersion.version,
+            type: gameVersion.type,
+            releaseDate: gameVersion.releaseDate,
+            importedDate: gameVersion.importedDate,
+            windows: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/windows/${gameVersion.version}.zip`,
+            windowsSha: gameVersion.winSha,
+            linux: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/linux/${gameVersion.version}.zip`,
+            linuxSha: gameVersion.linuxSha,
+            macos: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${gameVersion.version}-X64.zip`,
+            macosSha: gameVersion.macX64Sha,
+            macosX64: `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${gameVersion.version}-X64.zip`,
+            macosX64Sha: gameVersion.macX64Sha,
+            macosArm64: macosArm64File
+              ? `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${gameVersion.version}-ARM64.zip`
+              : `${process.env.PROTOCOL}${process.env.DOMAIN}/files/versions/macos/${gameVersion.version}-X64.zip`,
+            macosArm64Sha: gameVersion.macArm64Sha,
+          },
+          200,
+        );
+      }
     }
   } catch (error) {
     console.log("🔴 Error buscando el version:", error);
