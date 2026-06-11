@@ -14,7 +14,7 @@ export const getVersions = async (c: Context) => {
       return c.json(
         gameVersions.map((version) => {
           const macosArm64File = fse.existsSync(
-            `/app/public/files/versions/macos/${version.version}.zip`,
+            `/app/public/versions/macos/${version.version}.zip`,
           );
 
           return {
@@ -62,7 +62,7 @@ export const getVersionByVersion = async (c: Context) => {
         return c.json({ error: "Version not found" }, 404);
       } else {
         const macosArm64File = fse.existsSync(
-          `/app/public/files/versions/macos/${gameVersion.version}.zip`,
+          `/app/public/versions/macos/${gameVersion.version}.zip`,
         );
 
         return c.json(

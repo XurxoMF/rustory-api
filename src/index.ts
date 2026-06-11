@@ -59,7 +59,7 @@ setInterval(checkVersionsTopRocess, 1 * 60 * 1000);
   try {
     console.log(`\n\n\n🟢 Starting API on ${process.env.PROTOCOL}${process.env.DOMAIN}!`);
 
-    const files = fse.readdirSync("/app/public/files/versions/macos");
+    const files = fse.readdirSync("/app/public/versions/macos");
 
     if (files.some((file) => !file.endsWith("64.zip"))) {
       console.log("🟢 Renaming MacOS files to X64...");
@@ -68,8 +68,8 @@ setInterval(checkVersionsTopRocess, 1 * 60 * 1000);
         files.map(async (file) => {
           if (file.endsWith(".zip")) {
             await fse.rename(
-              `/app/public/files/versions/macos/${file}`,
-              `/app/public/files/versions/macos/${file.replace(".zip", "-X64.zip")}`,
+              `/app/public/versions/macos/${file}`,
+              `/app/public/versions/macos/${file.replace(".zip", "-X64.zip")}`,
             );
           }
         }),
