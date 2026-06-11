@@ -37,9 +37,11 @@ export async function checkVersionsTopRocess() {
     while (processing && fails < 3) {
       const winUrl = json[version]["windows"].urls.cdn ?? json[version]["windows"].urls.local;
       const linuxUrl = json[version]["linux"].urls.cdn ?? json[version]["linux"].urls.local;
-      const macosUrl = json[version]["mac"].urls.cdn ?? json[version]["mac"].urls.local;
+      const macosX64Url = json[version]["mac-x64"].urls.cdn ?? json[version]["mac-x64"].urls.local;
+      const macosArm64Url =
+        json[version]["mac-arm64"].urls.cdn ?? json[version]["mac-arm64"].urls.local;
 
-      if (!winUrl || !linuxUrl || !macosUrl) {
+      if (!winUrl || !linuxUrl || !macosX64Url || !macosArm64Url) {
         console.log(`🔴 Couldn't get some of the URLS for the version v${version}!`);
         continue;
       }
@@ -47,7 +49,8 @@ export async function checkVersionsTopRocess() {
       const urls: VersionURLSType = {
         win: winUrl,
         linux: linuxUrl,
-        macos: macosUrl,
+        macos_x64: macosX64Url,
+        macos_arm64: macosArm64Url,
       };
 
       const imported = await processVersion(version, urls, Date.now());
